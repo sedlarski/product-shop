@@ -1,5 +1,4 @@
 package com.sedlarski.productshop.domain.entities;
-
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
@@ -18,12 +17,12 @@ public class Role extends BaseEntity implements GrantedAuthority {
         this.authority = authority;
     }
 
-    public void setAuthority(String authority) {
-        this.authority = authority;
-    }
-
     @Override
     public String getAuthority() {
-        return null;
+        return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 }
