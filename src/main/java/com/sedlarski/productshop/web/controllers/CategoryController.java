@@ -7,10 +7,7 @@ import com.sedlarski.productshop.services.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.stream.Collectors;
@@ -49,6 +46,36 @@ public class CategoryController extends BaseController {
                         .map(c -> this.modelMapper.map(c, CategoryViewModel.class))
                         .collect(Collectors.toList()));
         return super.view("category/all-categories", modelAndView);
+    }
+
+    @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    public ModelAndView editCategory(@PathVariable String id, ModelAndView modelAndView) {
+        modelAndView.addObject("model",
+                this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryViewModel.class));
+        return super.view("category/edit-category", modelAndView);
+    }
+
+    @PostMapping("/edit/{id}")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    public ModelAndView editCategoryConfirm(@PathVariable String id, @ModelAttribute CategoryAddBindingModel model) {
+        this.categoryService.editCategory(id, this.modelMapper.map(model, CategoryServiceModel.class));
+        return super.redirect("/categories/all");
+    }
+
+    @GetMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    public ModelAndView deleteCategory(@PathVariable String id, ModelAndView modelAndView) {
+        modelAndView.addObject("model",
+                this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryViewModel.class));
+        return super.view("category/delete-category", modelAndView);
+    }
+
+    @PostMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    public ModelAndView deleteCategoryConfirm(@PathVariable String id) {
+        this.categoryService.deleteCategory(id);
+        return super.redirect("/categories/all");
     }
 
 }
