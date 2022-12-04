@@ -1,28 +1,17 @@
-package com.sedlarski.productshop.domain.models.service;
-
-import com.sedlarski.productshop.domain.entities.Category;
+package com.sedlarski.productshop.domain.view;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-public class ProductServiceModel extends BaseServiceModel {
+public class ProductDetailsViewModel {
+
     private String name;
     private String description;
     private String imageUrl;
     private BigDecimal price;
 
-    private List<CategoryServiceModel> categories;
-
-    public ProductServiceModel() {
+    public ProductDetailsViewModel() {
     }
 
-    public List<CategoryServiceModel> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<CategoryServiceModel> categories) {
-        this.categories = categories;
-    }
 
     public String getName() {
         return name;
