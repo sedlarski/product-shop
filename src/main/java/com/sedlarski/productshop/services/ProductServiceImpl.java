@@ -3,6 +3,7 @@ package com.sedlarski.productshop.services;
 import com.sedlarski.productshop.domain.entities.Category;
 import com.sedlarski.productshop.domain.entities.Product;
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
+import com.sedlarski.productshop.repository.CategoryRepository;
 import com.sedlarski.productshop.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -14,15 +15,18 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;;
     private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
     }
 
     @Override
     public ProductServiceModel addProduct(ProductServiceModel productServiceModel) {
+        List<Category> categories = categoryRepository.findAll();
         Product product = this.modelMapper.map(productServiceModel, Product.class);
         return this.modelMapper.map(this.productRepository.saveAndFlush(product), ProductServiceModel.class);
     }
@@ -61,5 +65,17 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList()));
         return this.modelMapper
                 .map(this.productRepository.saveAndFlush(product), ProductServiceModel.class);
+    }
+
+    @Override
+    public List<ProductServiceModel> findAllByCategory(String category) {
+        return this.productRepository
+                .findAll()
+                .stream()
+                .filter(p -> p.getCategories()
+                        .stream()
+                        .anyMatch(c -> c.getName().equals(category)))
+                .map(p -> this.modelMapper.map(p, ProductServiceModel.class))
+                .collect(Collectors.toList());
     }
 }

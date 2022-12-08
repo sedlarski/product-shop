@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -42,7 +43,8 @@ public class ProductController extends BaseController {
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public ModelAndView addProductConfirm(@ModelAttribute ProductAddBindingModel model) throws IOException {
         ProductServiceModel productServiceModel = this.modelMapper.map(model, ProductServiceModel.class);
-        productServiceModel.setCategories(this.categoryService.findAllCategories()
+        productServiceModel.setCategories(
+                this.categoryService.findAllCategories()
                 .stream()
                 .filter(c -> model.getCategories().contains(c.getId()))
                 .collect(Collectors.toList()));
@@ -115,5 +117,23 @@ public class ProductController extends BaseController {
     public ModelAndView deleteProductConfirm(@PathVariable String id) {
         this.productService.deleteProduct(id);
         return super.redirect("/products/all");
+    }
+
+    @GetMapping("/fetch/{category}")
+    @ResponseBody
+    public List<ProductAllViewModel> fetchByCategory(@PathVariable String category) {
+        if(category.equals("all")) {
+            return this.productService.findAllProducts()
+                    .stream()
+                    .map(p -> this.modelMapper.map(p, ProductAllViewModel.class))
+                    .collect(Collectors.toList());
+        }
+
+        return this.productService.findAllByCategory(category)
+                .stream()
+                .map(p -> this.modelMapper.map(p, ProductAllViewModel.class))
+                .collect(Collectors.toList());
+
+
     }
 }
