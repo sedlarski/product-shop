@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,20 @@ public class OrdersController extends BaseController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ModelAndView allOrders(ModelAndView modelAndView) {
         List<OrderViewModel> viewModels = this.orderService.findAllOrders()
+                .stream()
+                .map(o -> this.modelMapper.map(o, OrderViewModel.class))
+                .collect(Collectors.toList());
+        modelAndView.addObject("orders", viewModels);
+        return view("order/all-orders", modelAndView);
+    }
+
+    @GetMapping("/customer")
+    @PreAuthorize("isAuthenticated()")
+    public ModelAndView getCustomerOrders(ModelAndView modelAndView, Principal principal) {
+        List<OrderViewModel> viewModels = this.orderService.findOrdersByCustomer(principal.getName())
                 .stream()
                 .map(o -> this.modelMapper.map(o, OrderViewModel.class))
                 .collect(Collectors.toList());

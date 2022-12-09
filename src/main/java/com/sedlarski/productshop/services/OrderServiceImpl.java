@@ -45,12 +45,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderServiceModel> findAllOrders() {
-        var models =  orderRepository.findAll()
+        return orderRepository.findAll()
                 .stream()
                 .map(o -> modelMapper.map(o, OrderServiceModel.class))
                 .collect(Collectors.toList());
 
-        return models;
 
+    }
+
+    @Override
+    public List<OrderServiceModel> findOrdersByCustomer(String name) {
+        return orderRepository.findAllByUser_Username(name)
+                .stream()
+                .map(o -> modelMapper.map(o, OrderServiceModel.class))
+                .collect(Collectors.toList());
     }
 }

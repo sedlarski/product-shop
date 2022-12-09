@@ -10,4 +10,6 @@ public interface OrderService {
     void createOrder(String productId, String name);
 
     List<OrderServiceModel> findAllOrders();
+
+    List<OrderServiceModel> findOrdersByCustomer(String name);
 }
