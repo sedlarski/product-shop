@@ -38,5 +38,11 @@ public class OrdersController extends BaseController {
         return super.view("order/product", modelAndView);
     }
 
+    @GetMapping("/all")
+    @PreAuthorize("isAuthenticated()")
+    public ModelAndView allOrders(ModelAndView modelAndView) {
+        return view("order/all-orders", modelAndView);
+    }
+
 
 }
