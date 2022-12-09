@@ -1,7 +1,7 @@
 package com.sedlarski.productshop.web.controllers;
 
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
-import com.sedlarski.productshop.domain.rest.ProductOrderRequestModel;
+import com.sedlarski.productshop.domain.view.OrderViewModel;
 import com.sedlarski.productshop.domain.view.ProductDetailsViewModel;
 import com.sedlarski.productshop.services.OrderService;
 import com.sedlarski.productshop.services.ProductService;
@@ -11,7 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/order")
@@ -41,6 +42,11 @@ public class OrdersController extends BaseController {
     @GetMapping("/all")
     @PreAuthorize("isAuthenticated()")
     public ModelAndView allOrders(ModelAndView modelAndView) {
+        List<OrderViewModel> viewModels = this.orderService.findAllOrders()
+                .stream()
+                .map(o -> this.modelMapper.map(o, OrderViewModel.class))
+                .collect(Collectors.toList());
+        modelAndView.addObject("orders", viewModels);
         return view("order/all-orders", modelAndView);
     }
 
