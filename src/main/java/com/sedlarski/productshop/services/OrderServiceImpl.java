@@ -7,6 +7,8 @@ import com.sedlarski.productshop.domain.models.service.OrderServiceModel;
 import com.sedlarski.productshop.domain.models.service.UserServiceModel;
 import com.sedlarski.productshop.repository.OrderRepository;
 import com.sedlarski.productshop.repository.ProductRepository;
+import com.sedlarski.productshop.validation.ProductValidationService;
+import com.sedlarski.productshop.validation.UserValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +23,29 @@ public class OrderServiceImpl implements OrderService {
     private ProductRepository productRepository;
 
     private ModelMapper modelMapper;
+    private UserValidationService userValidationService;
+    private ProductValidationService productValidationService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, UserService userService, ProductRepository productRepository, ModelMapper modelMapper) {
+    public OrderServiceImpl(OrderRepository orderRepository, UserService userService, ProductRepository productRepository, ModelMapper modelMapper, UserValidationService userValidationService, ProductValidationService productValidationService) {
         this.orderRepository = orderRepository;
         this.userService = userService;
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
+        this.userValidationService = userValidationService;
+        this.productValidationService = productValidationService;
     }
 
     @Override
     public void createOrder(String productId, String name) {
+
         UserServiceModel userModel = userService.findByUsername(name);
-        Product product = productRepository.findById(productId).orElseThrow();
+        if (!userValidationService.isValid(userModel)) {
+            throw new IllegalArgumentException("User is not valid");
+        }
+
+        Product product = productRepository.findById(productId)
+                .filter(p -> productValidationService.isValid(p))
+                .orElseThrow();
         Order order = new Order();
         User user = new User();
         user.setId(userModel.getId());
