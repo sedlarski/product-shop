@@ -5,6 +5,7 @@ import com.sedlarski.productshop.domain.entities.Product;
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
 import com.sedlarski.productshop.repository.CategoryRepository;
 import com.sedlarski.productshop.repository.ProductRepository;
+import com.sedlarski.productshop.validation.ProductValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +19,23 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;;
     private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    private final ProductValidationService productValidationService;
+
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, ProductValidationService productValidationService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
+        this.productValidationService = productValidationService;
     }
 
     @Override
     public ProductServiceModel addProduct(ProductServiceModel productServiceModel) {
-        List<Category> categories = categoryRepository.findAll();
+        if(!productValidationService.isValid(productServiceModel)) {
+            throw new IllegalArgumentException("Product is not valid");
+        }
         Product product = this.modelMapper.map(productServiceModel, Product.class);
-        return this.modelMapper.map(this.productRepository.saveAndFlush(product), ProductServiceModel.class);
+        product = this.productRepository.save(product);
+        return this.modelMapper.map(product, ProductServiceModel.class);
     }
 
     @Override
