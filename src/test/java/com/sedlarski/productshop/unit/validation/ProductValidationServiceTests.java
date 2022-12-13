@@ -7,7 +7,6 @@ import com.sedlarski.productshop.validation.ProductValidationService;
 import com.sedlarski.productshop.validation.ProductValidationServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
