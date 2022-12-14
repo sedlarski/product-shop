@@ -1,37 +1,58 @@
 package com.sedlarski.productshop.domain.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
 public class Order extends BaseEntity{
-    Product product;
-    User user;
+   private List<Product> products;
+   private User user;
+   private BigDecimal totalPrice;
+   private LocalDateTime finishedOn;
 
     public Order() {
     }
 
-    @ManyToOne(
-            targetEntity = Product.class
-    )
-    public Product getProduct() {
-        return product;
+    @ManyToMany(targetEntity = Product.class)
+    @JoinTable(name = "orders_products",
+            joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
-    @ManyToOne(
-            targetEntity = User.class
-    )
+
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Column(name = "total_price")
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    @Column(name = "finished_on")
+    public LocalDateTime getFinishedOn() {
+        return finishedOn;
+    }
+
+    public void setFinishedOn(LocalDateTime finishedOn) {
+        this.finishedOn = finishedOn;
     }
 }

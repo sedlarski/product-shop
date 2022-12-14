@@ -1,6 +1,8 @@
 package com.sedlarski.productshop.domain.view;
 
-public class ShoppingCartItem {
+import java.io.Serializable;
+
+public class ShoppingCartItem implements Serializable {
 
     private ProductDetailsViewModel product;
     private int quantity;
