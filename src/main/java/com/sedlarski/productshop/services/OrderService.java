@@ -12,4 +12,6 @@ public interface OrderService {
     List<OrderServiceModel> findAllOrders();
 
     List<OrderServiceModel> findOrdersByCustomer(String name);
+
+    OrderServiceModel findOrderById(String id) throws Exception;
 }

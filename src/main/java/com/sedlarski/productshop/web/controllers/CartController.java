@@ -121,16 +121,16 @@ public class CartController extends BaseController {
     private OrderServiceModel prepareOrder(List<ShoppingCartItem> cart, String customer) {
         OrderServiceModel orderServiceModel = new OrderServiceModel();
         orderServiceModel.setUser(this.userService.findByUsername(customer));
-
+        List<ProductServiceModel> products = new ArrayList<>();
         for (ShoppingCartItem item : cart) {
             ProductServiceModel productServiceModel = this.modelMapper.map(item.getProduct(), ProductServiceModel.class);
-            List<ProductServiceModel> products = new ArrayList<>();
+
             for (int i = 0; i < item.getQuantity(); i++) {
                 products.add(productServiceModel);
             }
-            orderServiceModel.setProducts(products);
-        }
 
+        }
+        orderServiceModel.setProducts(products);
         orderServiceModel.setTotalPrice(calcTotal(cart));
         return orderServiceModel;
     }

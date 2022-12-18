@@ -62,5 +62,32 @@ public class OrdersController extends BaseController {
         return view("order/all-orders", modelAndView);
     }
 
+    @GetMapping("/all/details/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ModelAndView orderDetails(@PathVariable String id, ModelAndView modelAndView) throws Exception {
+        OrderViewModel order = this.modelMapper.map(this.orderService.findOrderById(id), OrderViewModel.class);
+        modelAndView.addObject("order", order);
+        return view("order/order-details", modelAndView);
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("isAuthenticated()")
+    public ModelAndView myOrders(ModelAndView modelAndView, Principal principal) {
+        List<OrderViewModel> viewModels = this.orderService.findOrdersByCustomer(principal.getName())
+                .stream()
+                .map(o -> this.modelMapper.map(o, OrderViewModel.class))
+                .collect(Collectors.toList());
+        modelAndView.addObject("orders", viewModels);
+        return view("order/all-orders", modelAndView);
+    }
+
+    @GetMapping("/my/details/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ModelAndView myOrderDetails(@PathVariable String id, ModelAndView modelAndView) throws Exception {
+        OrderViewModel order = this.modelMapper.map(this.orderService.findOrderById(id), OrderViewModel.class);
+        modelAndView.addObject("order", order);
+        return view("order/order-details", modelAndView);
+    }
+
 
 }

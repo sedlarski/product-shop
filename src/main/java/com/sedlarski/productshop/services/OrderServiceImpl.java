@@ -74,9 +74,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderServiceModel> findOrdersByCustomer(String name) {
-        return orderRepository.findAllByUser_Username(name)
+        List<OrderServiceModel> orders = orderRepository.findAllByUser_UsernameOrderByFinishedOn(name)
                 .stream()
                 .map(o -> modelMapper.map(o, OrderServiceModel.class))
                 .collect(Collectors.toList());
+        return orders;
+    }
+
+    @Override
+    public OrderServiceModel findOrderById(String id) throws Exception {
+        return this.orderRepository.findById(id)
+                .map(o -> this.modelMapper.map(o, OrderServiceModel.class))
+                .orElseThrow(() -> new Exception("Order not found"));
     }
 }
