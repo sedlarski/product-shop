@@ -1,67 +1,48 @@
 package com.sedlarski.productshop.domain.models.service;
 
-import com.sedlarski.productshop.domain.entities.Order;
-import com.sedlarski.productshop.mappings.IHaveCustomMappings;
-import org.modelmapper.ModelMapper;
-
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
-public class OrderServiceModel implements IHaveCustomMappings {
-    private String imageUrl;
-    private String name;
-    private BigDecimal price;
+public class OrderServiceModel extends BaseServiceModel {
 
-    private String customer;
+    private List<ProductServiceModel> products;
+    private UserServiceModel user;
+    private BigDecimal totalPrice;
+    private LocalDateTime finishedOn;
 
     public OrderServiceModel() {
     }
 
-    public String getCustomer() {
-        return customer;
+    public List<ProductServiceModel> getProducts() {
+        return products;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public void setProducts(List<ProductServiceModel> products) {
+        this.products = products;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public UserServiceModel getUser() {
+        return user;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setUser(UserServiceModel user) {
+        this.user = user;
     }
 
-    public String getName() {
-        return name;
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public LocalDateTime getFinishedOn() {
+        return finishedOn;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    @Override
-    public void configureMappings(ModelMapper mapper) {
-        mapper.createTypeMap(Order.class, OrderServiceModel.class)
-                .addMapping(entity -> entity.getProduct().getName(),
-                        (dto, value) -> dto.setName((String) value)
-                )
-                .addMapping(entity -> entity.getProduct().getPrice(),
-                        (dto, value) -> dto.setPrice((BigDecimal)  value)
-                )
-                .addMapping(entity -> entity.getProduct().getImageUrl(),
-                        (dto, value) -> dto.setImageUrl((String) value)
-                )
-                .addMapping(entity -> entity.getUser().getUsername(),
-                        (dto, value) -> dto.setCustomer((String) value)
-                );
+    public void setFinishedOn(LocalDateTime finishedOn) {
+        this.finishedOn = finishedOn;
     }
 }

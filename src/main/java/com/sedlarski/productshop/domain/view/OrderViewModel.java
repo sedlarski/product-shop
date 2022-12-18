@@ -1,47 +1,57 @@
 package com.sedlarski.productshop.domain.view;
 
-import com.sedlarski.productshop.repository.OrderRepository;
-import com.sedlarski.productshop.repository.ProductRepository;
-import com.sedlarski.productshop.services.UserService;
-import org.modelmapper.ModelMapper;
-
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class OrderViewModel {
-    private String imageUrl;
-    private String name;
-    private BigDecimal price;
-    private String customer;
 
-    public String getImageUrl() {
-        return imageUrl;
+    private String id;
+    private List<ProductDetailsViewModel> products;
+    private UserProfileViewModel user;
+    private BigDecimal totalPrice;
+    private LocalDateTime finishedOn;
+
+    public OrderViewModel() {
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public List<ProductDetailsViewModel> getProducts() {
+        return products;
     }
 
-    public String getName() {
-        return name;
+    public void setProducts(List<ProductDetailsViewModel> products) {
+        this.products = products;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public UserProfileViewModel getUser() {
+        return user;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public void setUser(UserProfileViewModel user) {
+        this.user = user;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 
-    public String getCustomer() {
-        return customer;
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public LocalDateTime getFinishedOn() {
+        return finishedOn;
+    }
+
+    public void setFinishedOn(LocalDateTime finishedOn) {
+        this.finishedOn = finishedOn;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrdersController extends BaseController {
 
     private ProductService productService;

@@ -12,6 +12,7 @@ import com.sedlarski.productshop.validation.UserValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,23 +37,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void createOrder(String productId, String name) {
+    public void createOrder(OrderServiceModel orderServiceModel) {
+        orderServiceModel.setFinishedOn(LocalDateTime.now());
+        Order order = this.modelMapper.map(orderServiceModel, Order.class);
+        order.setUser(this.modelMapper.map(orderServiceModel.getUser(), User.class));
+        orderRepository.saveAndFlush(order);
 
-        UserServiceModel userModel = userService.findByUsername(name);
-        if (!userValidationService.isValid(userModel)) {
-            throw new IllegalArgumentException("User is not valid");
-        }
 
-        Product product = productRepository.findById(productId)
-                .filter(p -> productValidationService.isValid(p))
-                .orElseThrow();
-        Order order = new Order();
-        User user = new User();
-        user.setId(userModel.getId());
-        order.setUser(user);
-        order.setProduct(product);
-
-        orderRepository.save(order);
+//        UserServiceModel userModel = userService.findByUsername(name);
+//        if (!userValidationService.isValid(userModel)) {
+//            throw new IllegalArgumentException("User is not valid");
+//        }
+//
+//        Product product = productRepository.findById(productId)
+//                .filter(p -> productValidationService.isValid(p))
+//                .orElseThrow();
+//        Order order = new Order();
+//        User user = new User();
+//        user.setId(userModel.getId());
+//        order.setUser(user);
+//        order.setProduct(product);
+//
+//        orderRepository.save(order);
 
     }
 

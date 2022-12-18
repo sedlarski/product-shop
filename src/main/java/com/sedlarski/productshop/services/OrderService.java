@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface OrderService {
-    void createOrder(String productId, String name);
+    void createOrder(OrderServiceModel orderServiceModel);
 
     List<OrderServiceModel> findAllOrders();
 

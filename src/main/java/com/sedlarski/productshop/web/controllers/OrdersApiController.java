@@ -22,6 +22,6 @@ public class OrdersApiController {
     @PreAuthorize("isAuthenticated()")
     public void submitOrder(@RequestBody ProductOrderRequestModel model, Principal principal) {
         String name = principal.getName();
-        orderService.createOrder(model.getId(), name);
+//        orderService.createOrder(model.getId(), name);
     }
 }

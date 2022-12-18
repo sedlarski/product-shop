@@ -1,12 +1,15 @@
 package com.sedlarski.productshop.web.controllers;
 
+import com.sedlarski.productshop.domain.models.service.OrderServiceModel;
+import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
 import com.sedlarski.productshop.domain.view.ProductDetailsViewModel;
 import com.sedlarski.productshop.domain.view.ShoppingCartItem;
+import com.sedlarski.productshop.services.OrderService;
 import com.sedlarski.productshop.services.ProductService;
+import com.sedlarski.productshop.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,10 +28,14 @@ public class CartController extends BaseController {
 
     private final ProductService productService;
     private final ModelMapper modelMapper;
+    private final UserService userService;
+    private final OrderService orderService;
 
-    public CartController(ProductService productService, ModelMapper modelMapper) {
+    public CartController(ProductService productService, ModelMapper modelMapper, UserService userService, OrderService orderService) {
         this.productService = productService;
         this.modelMapper = modelMapper;
+        this.userService = userService;
+        this.orderService = orderService;
     }
 
     @PostMapping("/add-product")
@@ -66,10 +75,10 @@ public class CartController extends BaseController {
 
     @PostMapping("/checkout")
     @PreAuthorize("isAuthenticated()")
-    public ModelAndView checkoutConfirm(ModelAndView modelAndView, HttpSession session) {
+    public ModelAndView checkoutConfirm(HttpSession session, Principal principal) {
         List<ShoppingCartItem> cart = this.retrieveCart(session);
-        modelAndView.addObject("totalPrice",
-                calcTotal(cart));
+        OrderServiceModel orderServiceModel = prepareOrder(cart, principal.getName());
+        this.orderService.createOrder(orderServiceModel);
         return super.redirect("/home");
     }
 
@@ -109,6 +118,21 @@ public class CartController extends BaseController {
         cart.add(cartItem);
     }
 
+    private OrderServiceModel prepareOrder(List<ShoppingCartItem> cart, String customer) {
+        OrderServiceModel orderServiceModel = new OrderServiceModel();
+        orderServiceModel.setUser(this.userService.findByUsername(customer));
 
+        for (ShoppingCartItem item : cart) {
+            ProductServiceModel productServiceModel = this.modelMapper.map(item.getProduct(), ProductServiceModel.class);
+            List<ProductServiceModel> products = new ArrayList<>();
+            for (int i = 0; i < item.getQuantity(); i++) {
+                products.add(productServiceModel);
+            }
+            orderServiceModel.setProducts(products);
+        }
+
+        orderServiceModel.setTotalPrice(calcTotal(cart));
+        return orderServiceModel;
+    }
 
 }
