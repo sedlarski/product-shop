@@ -3,6 +3,7 @@ package com.sedlarski.productshop.services;
 import com.sedlarski.productshop.domain.entities.Category;
 import com.sedlarski.productshop.domain.entities.Product;
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
+import com.sedlarski.productshop.error.ProductNotFoundException;
 import com.sedlarski.productshop.repository.CategoryRepository;
 import com.sedlarski.productshop.repository.ProductRepository;
 import com.sedlarski.productshop.validation.ProductValidationService;
@@ -50,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductServiceModel findById(String id) {
         return this.productRepository.findById(id)
                 .map(p -> this.modelMapper.map(p, ProductServiceModel.class))
-                .orElseThrow(() -> new IllegalArgumentException("Product not found!"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
 
     }
 
@@ -62,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductServiceModel editProduct(String id, ProductServiceModel productServiceModel) {
         Product product = this.productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid product Id"));
+                .orElseThrow(() -> new ProductNotFoundException("Invalid product Id"));
         product.setName(productServiceModel.getName());
         product.setDescription(productServiceModel.getDescription());
         product.setPrice(productServiceModel.getPrice());

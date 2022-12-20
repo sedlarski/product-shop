@@ -5,6 +5,7 @@ import com.sedlarski.productshop.domain.models.service.CloudinaryService;
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
 import com.sedlarski.productshop.domain.view.ProductAllViewModel;
 import com.sedlarski.productshop.domain.view.ProductDetailsViewModel;
+import com.sedlarski.productshop.error.ProductNotFoundException;
 import com.sedlarski.productshop.services.CategoryService;
 import com.sedlarski.productshop.services.ProductService;
 import org.modelmapper.ModelMapper;
@@ -133,7 +134,7 @@ public class ProductController extends BaseController {
                 .stream()
                 .map(p -> this.modelMapper.map(p, ProductAllViewModel.class))
                 .collect(Collectors.toList());
-
-
     }
+
+
 }
