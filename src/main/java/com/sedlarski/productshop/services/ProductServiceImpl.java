@@ -1,29 +1,35 @@
 package com.sedlarski.productshop.services;
 
 import com.sedlarski.productshop.domain.entities.Category;
+import com.sedlarski.productshop.domain.entities.Offer;
 import com.sedlarski.productshop.domain.entities.Product;
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
 import com.sedlarski.productshop.error.ProductNotFoundException;
 import com.sedlarski.productshop.repository.CategoryRepository;
+import com.sedlarski.productshop.repository.OfferRepository;
 import com.sedlarski.productshop.repository.ProductRepository;
 import com.sedlarski.productshop.validation.ProductValidationService;
 import org.modelmapper.ModelMapper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final OfferRepository offerRepository;
     private final CategoryRepository categoryRepository;;
     private final ModelMapper modelMapper;
 
     private final ProductValidationService productValidationService;
 
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, ProductValidationService productValidationService) {
+    public ProductServiceImpl(ProductRepository productRepository, OfferRepository offerRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, ProductValidationService productValidationService) {
         this.productRepository = productRepository;
+        this.offerRepository = offerRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
         this.productValidationService = productValidationService;
@@ -86,4 +92,18 @@ public class ProductServiceImpl implements ProductService {
                 .map(p -> this.modelMapper.map(p, ProductServiceModel.class))
                 .collect(Collectors.toList());
     }
+
+//    @Scheduled(fixedRate = 5000)
+//    private void generateOffers() {
+//        this.offerRepository.deleteAll();
+//        List<Product> products = this.productRepository.findAll();
+//        Random random = new Random();
+//        for (int i = 0; i < 5; i++) {
+//            Offer offer = new Offer();
+//            offer.setProduct(products.get(random.nextInt(products.size())));
+//            this.offerRepository.saveAndFlush(offer);
+//        }
+//
+//
+//    }
 }

@@ -7,8 +7,10 @@ import com.sedlarski.productshop.domain.view.UserAllViewModel;
 import com.sedlarski.productshop.domain.view.UserProfileViewModel;
 import com.sedlarski.productshop.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -122,6 +124,11 @@ public class UserController extends BaseController {
     public ModelAndView setAdmin(@PathVariable String id) {
         this.userService.setUserRole(id, "admin");
         return super.redirect("/users/all");
+    }
+
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
 

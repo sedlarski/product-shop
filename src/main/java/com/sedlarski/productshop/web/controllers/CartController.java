@@ -1,7 +1,9 @@
 package com.sedlarski.productshop.web.controllers;
 
+import com.sedlarski.productshop.domain.models.service.OrderProductServiceModel;
 import com.sedlarski.productshop.domain.models.service.OrderServiceModel;
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
+import com.sedlarski.productshop.domain.view.OrderProductViewModel;
 import com.sedlarski.productshop.domain.view.ProductDetailsViewModel;
 import com.sedlarski.productshop.domain.view.ShoppingCartItem;
 import com.sedlarski.productshop.services.OrderService;
@@ -43,8 +45,11 @@ public class CartController extends BaseController {
     public ModelAndView addToCart(String id, int quantity, HttpSession session) {
         ProductDetailsViewModel product = this.modelMapper.map( this.productService.findById(id),
                 ProductDetailsViewModel.class);
+        OrderProductViewModel orderProductViewModel = new OrderProductViewModel();
+        orderProductViewModel.setProduct(product);
+        orderProductViewModel.setPrice(product.getPrice());
         ShoppingCartItem item = new ShoppingCartItem();
-        item.setProduct(product);
+        item.setProduct(orderProductViewModel);
         item.setQuantity(quantity);
 
         List<ShoppingCartItem> cart = this.retrieveCart(session);
@@ -83,7 +88,7 @@ public class CartController extends BaseController {
     }
 
     private void removeItemFromCart(String id, List<ShoppingCartItem> cart) {
-        cart.removeIf(item -> item.getProduct().getId().equals(id));
+        cart.removeIf(item -> item.getProduct().getProduct().getId().equals(id));
     }
 
     private List<ShoppingCartItem> retrieveCart(HttpSession session) {
@@ -110,7 +115,7 @@ public class CartController extends BaseController {
 
     private void addItemToCart(ShoppingCartItem cartItem, List<ShoppingCartItem> cart) {
         for (ShoppingCartItem item : cart) {
-            if (item.getProduct().getId().equals(cartItem.getProduct().getId())) {
+            if (item.getProduct().getProduct().getId().equals(cartItem.getProduct().getProduct().getId())) {
                 item.setQuantity(item.getQuantity() + cartItem.getQuantity());
                 return;
             }
@@ -121,9 +126,9 @@ public class CartController extends BaseController {
     private OrderServiceModel prepareOrder(List<ShoppingCartItem> cart, String customer) {
         OrderServiceModel orderServiceModel = new OrderServiceModel();
         orderServiceModel.setUser(this.userService.findByUsername(customer));
-        List<ProductServiceModel> products = new ArrayList<>();
+        List<OrderProductServiceModel> products = new ArrayList<>();
         for (ShoppingCartItem item : cart) {
-            ProductServiceModel productServiceModel = this.modelMapper.map(item.getProduct(), ProductServiceModel.class);
+            OrderProductServiceModel productServiceModel = this.modelMapper.map(item.getProduct(), OrderProductServiceModel.class);
 
             for (int i = 0; i < item.getQuantity(); i++) {
                 products.add(productServiceModel);

@@ -12,6 +12,7 @@ import com.sedlarski.productshop.validation.UserValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void createOrder(OrderServiceModel orderServiceModel) {
         orderServiceModel.setFinishedOn(LocalDateTime.now());
         Order order = this.modelMapper.map(orderServiceModel, Order.class);
@@ -64,10 +66,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderServiceModel> findAllOrders() {
-        return orderRepository.findAll()
+        List<Order> orders = orderRepository.findAll();
+        List<OrderServiceModel> orderServiceModels = orders
                 .stream()
-                .map(o -> modelMapper.map(o, OrderServiceModel.class))
+                .map(o -> this.modelMapper.map(o, OrderServiceModel.class))
                 .collect(Collectors.toList());
+
+        return orderServiceModels;
 
 
     }
