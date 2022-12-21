@@ -3,6 +3,7 @@ package com.sedlarski.productshop.web.controllers;
 import com.sedlarski.productshop.domain.models.binding.ProductAddBindingModel;
 import com.sedlarski.productshop.domain.models.service.CloudinaryService;
 import com.sedlarski.productshop.domain.models.service.ProductServiceModel;
+import com.sedlarski.productshop.domain.view.OrderProductViewModel;
 import com.sedlarski.productshop.domain.view.ProductAllViewModel;
 import com.sedlarski.productshop.domain.view.ProductDetailsViewModel;
 import com.sedlarski.productshop.error.ProductNotFoundException;
@@ -135,6 +136,7 @@ public class ProductController extends BaseController {
                 .map(p -> this.modelMapper.map(p, ProductAllViewModel.class))
                 .collect(Collectors.toList());
     }
+
 
 
 }

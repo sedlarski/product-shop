@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -56,7 +57,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductServiceModel findById(String id) {
         return this.productRepository.findById(id)
-                .map(p -> this.modelMapper.map(p, ProductServiceModel.class))
+                .map(p -> {
+                    ProductServiceModel productServiceModel = this.modelMapper.map(p, ProductServiceModel.class);
+                    this.offerRepository.findByProduct_Id(productServiceModel.getId())
+                            .ifPresent(o -> productServiceModel.setPrice(o.getPrice()));
+                    return productServiceModel;
+                })
                 .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
 
     }
@@ -93,17 +99,5 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-//    @Scheduled(fixedRate = 5000)
-//    private void generateOffers() {
-//        this.offerRepository.deleteAll();
-//        List<Product> products = this.productRepository.findAll();
-//        Random random = new Random();
-//        for (int i = 0; i < 5; i++) {
-//            Offer offer = new Offer();
-//            offer.setProduct(products.get(random.nextInt(products.size())));
-//            this.offerRepository.saveAndFlush(offer);
-//        }
-//
-//
-//    }
+
 }

@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, String> {
     List<Order> findAllByUser_UsernameOrderByFinishedOn(String name);
+
 }

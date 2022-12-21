@@ -1,15 +1,14 @@
 package com.sedlarski.productshop.domain.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "offers")
 public class Offer extends BaseEntity {
 
     private Product product;
+    private BigDecimal price;
 
     public Offer() {
     }
@@ -25,5 +24,14 @@ public class Offer extends BaseEntity {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    @Column(name = "price", nullable = false)
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }
